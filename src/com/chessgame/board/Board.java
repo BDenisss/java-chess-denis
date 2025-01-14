@@ -2,6 +2,7 @@ package com.chessgame.board;
 
 import com.chessgame.pieces.Piece;
 import com.chessgame.pieces.Pawn;
+import com.chessgame.pieces.Rook;
 
 public class Board {
     private Cell[][] grid; // Grille de 8x8 cases
@@ -32,6 +33,15 @@ public class Board {
         for (int x = 0; x < 8; x++) {
             placePiece(new Pawn("black"), x, 6); // Ligne 7 pour les pions noirs
         }
+
+        // Tours blanches
+        placePiece(new Rook("white"), 0, 0); // Tour en a1
+        placePiece(new Rook("white"), 7, 0); // Tour en h1
+
+        // Tours noires
+        placePiece(new Rook("black"), 0, 7); // Tour en a8
+        placePiece(new Rook("black"), 7, 7); // Tour en h8
+
 
         // Autres pièces à ajouter plus tard : tours, cavaliers, fous, roi, reine...
     }
