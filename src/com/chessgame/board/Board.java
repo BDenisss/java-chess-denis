@@ -1,5 +1,6 @@
 package com.chessgame.board;
 
+import com.chessgame.pieces.Knight;
 import com.chessgame.pieces.Piece;
 import com.chessgame.pieces.Pawn;
 import com.chessgame.pieces.Rook;
@@ -41,6 +42,18 @@ public class Board {
         // Tours noires
         placePiece(new Rook("black"), 0, 7); // Tour en a8
         placePiece(new Rook("black"), 7, 7); // Tour en h8
+
+        // Cavaliers blancs
+        placePiece(new Knight("white"), 1, 0);
+        placePiece(new Knight("white"), 6, 0);
+
+        // Cavaliers noirs
+        placePiece(new Knight("white"), 1, 0);
+        placePiece(new Knight("white"), 6, 0);
+
+        // Cavaliers noirs
+        placePiece(new Knight("black"), 1, 7);
+        placePiece(new Knight("black"), 6, 7);
 
 
         // Autres pièces à ajouter plus tard : tours, cavaliers, fous, roi, reine...
