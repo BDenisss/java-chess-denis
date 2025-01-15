@@ -1,9 +1,6 @@
 package com.chessgame.board;
 
-import com.chessgame.pieces.Knight;
-import com.chessgame.pieces.Piece;
-import com.chessgame.pieces.Pawn;
-import com.chessgame.pieces.Rook;
+import com.chessgame.pieces.*;
 
 public class Board {
     private Cell[][] grid; // Grille de 8x8 cases
@@ -47,13 +44,29 @@ public class Board {
         placePiece(new Knight("white"), 1, 0);
         placePiece(new Knight("white"), 6, 0);
 
-        // Cavaliers noirs
+        // Cavaliers blancs
         placePiece(new Knight("white"), 1, 0);
         placePiece(new Knight("white"), 6, 0);
 
         // Cavaliers noirs
         placePiece(new Knight("black"), 1, 7);
         placePiece(new Knight("black"), 6, 7);
+
+        // Fous blancs
+        placePiece(new Bishop("white"), 2, 0);
+        placePiece(new Bishop("white"), 5, 0);
+
+        // Fous noirs
+        placePiece(new Bishop("black"), 2, 7);
+        placePiece(new Bishop("black"), 5, 7);
+
+        // Dame blanche et noir
+        placePiece(new Queen("white"),3, 0);
+        placePiece(new Queen("black"),3, 7);
+
+        // Roi blanc et noir
+        placePiece(new King("white"),4,0);
+        placePiece(new King("black"),4,7);
 
 
         // Autres pièces à ajouter plus tard : tours, cavaliers, fous, roi, reine...
