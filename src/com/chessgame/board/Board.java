@@ -99,4 +99,65 @@ public class Board {
         }
     }
 
+    public Piece getPieceAt(int x, int y) {
+        if(isValidPosition(x,y)) {
+            return grid[x][y].getPiece();
+        }
+        return null;
+    }
+
+    public void movePiece(int srcX, int srcY, int destX, int destY) {
+        if (isValidPosition(srcX, srcY) && isValidPosition(destX, destY)) {
+            Piece piece = grid[srcX][srcY].getPiece();
+            grid[destX][destY].setPiece(piece); // Place la pièce à la nouvelle position
+            grid[srcX][srcY].setPiece(null);    // Vide la position d'origine
+            if (piece != null) {
+                piece.setPosition(destX, destY); // Met à jour la position de la pièce
+            }
+        }
+    }
+
+    public boolean isPathClear(int startX, int startY, int endX, int endY) {
+        // Déplacement d'une seule case : toujours libre
+        if (Math.abs(endX - startX) <= 1 && Math.abs(endY - startY) <= 1) {
+            return true;
+        }
+
+        // Déplacement vertical
+        if (startX == endX) {
+            int step = (endY > startY) ? 1 : -1;
+            for (int y = startY + step; y != endY; y += step) {
+                if (getPieceAt(startX, y) != null) {
+                    return false; // Une pièce bloque le chemin
+                }
+            }
+        }
+        // Déplacement horizontal
+        else if (startY == endY) {
+            int step = (endX > startX) ? 1 : -1;
+            for (int x = startX + step; x != endX; x += step) {
+                if (getPieceAt(x, startY) != null) {
+                    return false; // Une pièce bloque le chemin
+                }
+            }
+        }
+        // Déplacement diagonal
+        else if (Math.abs(endX - startX) == Math.abs(endY - startY)) {
+            int stepX = (endX > startX) ? 1 : -1;
+            int stepY = (endY > startY) ? 1 : -1;
+            int x = startX + stepX;
+            int y = startY + stepY;
+            while (x != endX && y != endY) {
+                if (getPieceAt(x, y) != null) {
+                    return false; // Une pièce bloque le chemin
+                }
+                x += stepX;
+                y += stepY;
+            }
+        }
+        return true; // Le chemin est libre
+    }
+
+
+
 }

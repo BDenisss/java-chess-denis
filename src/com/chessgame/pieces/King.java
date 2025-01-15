@@ -1,5 +1,7 @@
 package com.chessgame.pieces;
 
+import com.chessgame.board.Board;
+
 public class King extends Piece {
 
     public King (String color) {
@@ -7,9 +9,14 @@ public class King extends Piece {
     }
 
     @Override
-    public boolean isValidMove(int newX, int newY) {
-        // Le roi peut se déplacer d'une case dans toutes les directions
-        return Math.abs(newX - x) <= 1 && Math.abs(newY - y) <= 1;
+    public boolean isValidMove(int newX, int newY, Board board) {
+        if (Math.abs(newX - x) <= 1 && Math.abs(newY - y) <= 1) { // Déplacement d'une case
+            Piece target = board.getPieceAt(newX, newY);
+            if (target == null || !target.getColor().equals(this.color)) {
+                return true; // Case vide ou capture valide
+            }
+        }
+        return false; // Déplacement invalide
     }
 
 

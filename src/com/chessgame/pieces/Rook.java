@@ -1,5 +1,8 @@
 package com.chessgame.pieces;
 
+
+import com.chessgame.board.Board;
+
 public class Rook extends Piece {
 
     public Rook(String color) {
@@ -7,16 +10,18 @@ public class Rook extends Piece {
     }
 
     @Override
-    public boolean isValidMove(int newX, int newY) {
-        // Une tour peut se déplacer en ligne droite horizontalement ou verticalement
-        // Vérifie si le déplacement est en ligne droite
-        if (newX == x || newY == y) {
-            return true;
+    public boolean isValidMove(int newX, int newY, Board board) {
+        if ((newX == x || newY == y) && board.isPathClear(x, y, newX, newY)) {
+            Piece target = board.getPieceAt(newX, newY);
+            if (target == null || !target.getColor().equals(this.color)) {
+                return true; // Case vide ou capture valide
+            }
         }
-
-        // Si aucune condition n'est remplie, le mouvement est invalide
-        return false;
+        return false; // Déplacement invalide
     }
+
+
+
 
     @Override
     public String toString() {

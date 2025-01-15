@@ -1,5 +1,7 @@
 package com.chessgame.pieces;
 
+import com.chessgame.board.Board;
+
 public class Knight extends Piece {
 
     public Knight(String color) {
@@ -7,7 +9,7 @@ public class Knight extends Piece {
     }
 
     @Override
-    public boolean isValidMove(int newX, int newY) {
+    public boolean isValidMove(int newX, int newY, Board board) {
         // Le déplacement en "L" du cavalier : 2 cases dans une direction et 1 dans une autre
         int deltaX = Math.abs(newX - x);
         int deltaY = Math.abs(newY - y);
