@@ -23,9 +23,9 @@ public class Pawn extends Piece {
         }
 
         // Déplacement diagonal pour capturer une pièce
-        if (Math.abs(newX - x) == 1 && newY == y + direction) {
-            return true;
-        }
+        //if (Math.abs(newX - x) == 1 && newY == y + direction) {
+            //return true;
+        //}
 
         return false; // Si aucune des conditions n'est remplie, le mouvement est invalide
     }

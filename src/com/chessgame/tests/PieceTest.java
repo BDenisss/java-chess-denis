@@ -47,7 +47,7 @@ public class PieceTest {
         bishop.setPosition(4, 4);
         System.out.println(bishop.isValidMove(6, 6)); // True: en diagonale
         System.out.println(bishop.isValidMove(2, 2)); // True: en diagonale
-        System.out.println(bishop.isValidMove(5, 3)); // False: pas en diagonale
+        System.out.println(bishop.isValidMove(5, 8)); // False: en diagonale
     }
 
     public static void testQueen() {
@@ -56,7 +56,7 @@ public class PieceTest {
         queen.setPosition(4, 4);
         System.out.println(queen.isValidMove(4, 7)); // True: en ligne droite
         System.out.println(queen.isValidMove(7, 7)); // True: en diagonale
-        System.out.println(queen.isValidMove(5, 3)); // False: mouvement invalide
+        System.out.println(queen.isValidMove(5, 7)); // False: mouv invalide
     }
 
     public static void testKing() {
@@ -67,4 +67,7 @@ public class PieceTest {
         System.out.println(king.isValidMove(4, 5)); // True: une case verticale
         System.out.println(king.isValidMove(6, 6)); // False: trop loin
     }
+
+
+
 }
