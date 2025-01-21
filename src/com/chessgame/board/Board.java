@@ -157,6 +157,31 @@ public class Board {
         }
         return true; // Le chemin est libre
     }
+    public void promotePawn(int x, int y, String choice) {
+        Piece pawn = getPieceAt(x, y);
+        if (pawn instanceof Pawn && ((Pawn) pawn).isEligibleForPromotion()) {
+            Piece promotedPiece = null;
+            switch (choice.toLowerCase()) {
+                case "queen":
+                    promotedPiece = new Queen(pawn.getColor());
+                    break;
+                case "rook":
+                    promotedPiece = new Rook(pawn.getColor());
+                    break;
+                case "bishop":
+                    promotedPiece = new Bishop(pawn.getColor());
+                    break;
+                case "knight":
+                    promotedPiece = new Knight(pawn.getColor());
+                    break;
+                default:
+                    System.out.println("Choix invalide, promotion en Reine par défaut.");
+                    promotedPiece = new Queen(pawn.getColor());
+            }
+            promotedPiece.setPosition(x, y); // Conserve la position du pion
+            grid[x][y].setPiece(promotedPiece); // Remplace le pion par la pièce promue
+        }
+    }
 
 
 

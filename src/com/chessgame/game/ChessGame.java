@@ -1,20 +1,23 @@
 package com.chessgame.game;
 
 import com.chessgame.board.Board;
+import com.chessgame.pieces.Pawn;
 import com.chessgame.pieces.Piece;
 
 import java.util.Scanner;
 
 public class ChessGame {
-
     public static void main(String[] args) {
         System.out.println("Bienvenue dans le jeu d'échecs !");
         Board board = new Board();
         board.initializePieces();
         Scanner scanner = new Scanner(System.in);
 
+        boolean isWhiteTurn = true; // Les blancs commencent
+
         while (true) {
             board.printBoard();
+            System.out.println((isWhiteTurn ? "Blancs" : "Noirs") + ", c'est votre tour !");
             System.out.println("Entrez votre commande (format : 'e2 e4' ou 'exit' pour quitter) :");
             String command = scanner.nextLine();
 
@@ -46,9 +49,27 @@ public class ChessGame {
                 continue;
             }
 
+            // Vérifier si la pièce appartient au joueur actif
+            if ((isWhiteTurn && !piece.getColor().equals("white")) ||
+                    (!isWhiteTurn && !piece.getColor().equals("black"))) {
+                System.out.println("Ce n'est pas votre pièce. Veuillez réessayer.");
+                continue;
+            }
+
+            // Vérifier et effectuer le déplacement
             if (piece.isValidMove(destination[0], destination[1], board)) {
                 board.movePiece(source[0], source[1], destination[0], destination[1]);
+
+                // Gestion de la promotion des pions
+                if (piece instanceof Pawn && ((Pawn) piece).isEligibleForPromotion()) {
+                    System.out.println("Votre pion est éligible à une promotion !");
+                    System.out.println("Choisissez une pièce (queen, rook, bishop, knight) :");
+                    String choice = scanner.nextLine();
+                    board.promotePawn(destination[0], destination[1], choice);
+                }
+
                 System.out.println("Déplacement effectué !");
+                isWhiteTurn = !isWhiteTurn; // Alterner le tour
             } else {
                 System.out.println("Déplacement invalide pour cette pièce. Veuillez réessayer.");
             }
@@ -71,3 +92,4 @@ public class ChessGame {
         return new int[]{x, y};
     }
 }
+
