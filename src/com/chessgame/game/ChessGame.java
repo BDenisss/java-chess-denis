@@ -58,9 +58,21 @@ public class ChessGame {
 
             // Vérifier et effectuer le déplacement
             if (piece.isValidMove(destination[0], destination[1], board)) {
+                // Simuler le déplacement
+                Piece originalPiece = board.getPieceAt(destination[0], destination[1]);
                 board.movePiece(source[0], source[1], destination[0], destination[1]);
 
-                // Gestion de la promotion des pions
+                // Vérifier si le roi est toujours en échec
+                if (board.isKingInCheck(isWhiteTurn ? "white" : "black")) {
+                    // Annuler le déplacement
+                    board.movePiece(destination[0], destination[1], source[0], source[1]);
+                    board.placePiece(destination[0], destination[1], originalPiece); // Restaurer la pièce
+                    System.out.println("Déplacement invalide : le roi est toujours en échec !");
+                    continue;
+                }
+
+
+                // Si le déplacement est valide, vérifier les promotions
                 if (piece instanceof Pawn && ((Pawn) piece).isEligibleForPromotion()) {
                     System.out.println("Votre pion est éligible à une promotion !");
                     System.out.println("Choisissez une pièce (queen, rook, bishop, knight) :");
@@ -68,8 +80,20 @@ public class ChessGame {
                     board.promotePawn(destination[0], destination[1], choice);
                 }
 
+                if (board.isKingInCheck(isWhiteTurn ? "black" : "white")) {
+                    System.out.println((isWhiteTurn ? "Noirs" : "Blancs") + " sont en échec !");
+
+                    // Vérifier si le joueur peut éviter l'échec
+                    if (!board.canPlayerAvoidCheck(isWhiteTurn ? "black" : "white")) {
+                        System.out.println((isWhiteTurn ? "Noirs" : "Blancs") + " sont en échec et mat !");
+                        System.out.println((isWhiteTurn ? "Blancs" : "Noirs") + " gagnent la partie !");
+                        break; // Fin de la partie
+                    }
+                }
+
+
                 System.out.println("Déplacement effectué !");
-                isWhiteTurn = !isWhiteTurn; // Alterner le tour
+                isWhiteTurn = !isWhiteTurn; // Changer de joueur
             } else {
                 System.out.println("Déplacement invalide pour cette pièce. Veuillez réessayer.");
             }
@@ -92,4 +116,3 @@ public class ChessGame {
         return new int[]{x, y};
     }
 }
-

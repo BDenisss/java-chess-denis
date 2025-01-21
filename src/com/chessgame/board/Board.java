@@ -11,6 +11,16 @@ public class Board {
         initializeBoard(); // Initialise chaque case
     }
 
+    public void placePiece(int x, int y, Piece piece) {
+        if (isValidPosition(x, y)) {
+            grid[x][y].setPiece(piece);
+        } else {
+            throw new IllegalArgumentException("Position invalide : (" + x + ", " + y + ")");
+        }
+    }
+
+
+
     // Initialise toutes les cases de l'échiquier
     private void initializeBoard() {
         for (int x = 0; x < 8; x++) {
@@ -118,11 +128,6 @@ public class Board {
     }
 
     public boolean isPathClear(int startX, int startY, int endX, int endY) {
-        // Déplacement d'une seule case : toujours libre
-        if (Math.abs(endX - startX) <= 1 && Math.abs(endY - startY) <= 1) {
-            return true;
-        }
-
         // Déplacement vertical
         if (startX == endX) {
             int step = (endY > startY) ? 1 : -1;
@@ -157,6 +162,9 @@ public class Board {
         }
         return true; // Le chemin est libre
     }
+
+
+
     public void promotePawn(int x, int y, String choice) {
         Piece pawn = getPieceAt(x, y);
         if (pawn instanceof Pawn && ((Pawn) pawn).isEligibleForPromotion()) {
@@ -182,6 +190,111 @@ public class Board {
             grid[x][y].setPiece(promotedPiece); // Remplace le pion par la pièce promue
         }
     }
+
+    public boolean isKingInCheck(String color) {
+        int kingX = -1, kingY = -1;
+
+        // Trouver la position du roi
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                Piece piece = getPieceAt(x, y);
+                if (piece instanceof King && piece.getColor().equals(color)) {
+                    kingX = x;
+                    kingY = y;
+                    break;
+                }
+            }
+        }
+
+        if (kingX == -1 || kingY == -1) {
+            throw new IllegalStateException("Roi introuvable pour la couleur : " + color);
+        }
+
+        // Vérifier si une pièce adverse peut atteindre le roi
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                Piece piece = getPieceAt(x, y);
+                if (piece != null && !piece.getColor().equals(color)) {
+                    if (piece.isValidMove(kingX, kingY, this)) {
+                        System.out.println("Échec détecté par la pièce : " + piece + " à (" + x + ", " + y + ")");
+                        return true; // Le roi est en échec
+                    }
+                }
+            }
+        }
+
+        return false; // Le roi n'est pas en échec
+    }
+
+
+
+
+    public boolean isCheckmate(String color) {
+        if (!isKingInCheck(color)) {
+            return false; // Pas en échec, donc pas en échec et mat
+        }
+
+        // Parcourir toutes les pièces du joueur
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                Piece piece = getPieceAt(x, y);
+                if (piece != null && piece.getColor().equals(color)) {
+                    // Tester tous les déplacements possibles de cette pièce
+                    for (int newX = 0; newX < 8; newX++) {
+                        for (int newY = 0; newY < 8; newY++) {
+                            if (piece.isValidMove(newX, newY, this)) {
+                                // Simuler le déplacement
+                                Piece originalPiece = getPieceAt(newX, newY);
+                                movePiece(x, y, newX, newY);
+                                boolean stillInCheck = isKingInCheck(color);
+                                // Annuler le déplacement
+                                movePiece(newX, newY, x, y);
+                                grid[newX][newY].setPiece(originalPiece);
+
+                                if (!stillInCheck) {
+                                    return false; // Une action peut éviter l'échec
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return true; // Aucun déplacement possible pour sortir de l'échec
+    }
+
+    public boolean canPlayerAvoidCheck(String color) {
+        // Parcourir toutes les pièces du joueur
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                Piece piece = getPieceAt(x, y);
+                if (piece != null && piece.getColor().equals(color)) {
+                    // Tester tous les déplacements possibles de cette pièce
+                    for (int newX = 0; newX < 8; newX++) {
+                        for (int newY = 0; newY < 8; newY++) {
+                            if (piece.isValidMove(newX, newY, this)) {
+                                // Simuler le déplacement
+                                Piece originalPiece = getPieceAt(newX, newY);
+                                movePiece(x, y, newX, newY);
+                                boolean stillInCheck = isKingInCheck(color);
+                                // Annuler le déplacement
+                                movePiece(newX, newY, x, y);
+                                grid[newX][newY].setPiece(originalPiece);
+
+                                if (!stillInCheck) {
+                                    return true; // Un mouvement peut éviter l'échec
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false; // Aucun déplacement ne peut éviter l'échec
+    }
+
+
 
 
 
