@@ -14,6 +14,9 @@ public class Board {
     public void placePiece(int x, int y, Piece piece) {
         if (isValidPosition(x, y)) {
             grid[x][y].setPiece(piece);
+            if (piece != null) {
+                piece.setPosition(x, y); // Mise à jour des coordonnées internes
+            }
         } else {
             throw new IllegalArgumentException("Position invalide : (" + x + ", " + y + ")");
         }
@@ -201,6 +204,7 @@ public class Board {
                 if (piece instanceof King && piece.getColor().equals(color)) {
                     kingX = x;
                     kingY = y;
+                    System.out.println("Roi trouvé : (" + kingX + ", " + kingY + ")");
                     break;
                 }
             }
@@ -215,8 +219,9 @@ public class Board {
             for (int y = 0; y < 8; y++) {
                 Piece piece = getPieceAt(x, y);
                 if (piece != null && !piece.getColor().equals(color)) {
+                    System.out.println("Test menace : " + piece + " en (" + x + ", " + y + ")");
                     if (piece.isValidMove(kingX, kingY, this)) {
-                        System.out.println("Échec détecté par la pièce : " + piece + " à (" + x + ", " + y + ")");
+                        System.out.println("Roi menacé par : " + piece + " en (" + x + ", " + y + ")");
                         return true; // Le roi est en échec
                     }
                 }
@@ -225,6 +230,7 @@ public class Board {
 
         return false; // Le roi n'est pas en échec
     }
+
 
 
 

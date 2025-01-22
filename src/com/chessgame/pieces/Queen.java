@@ -10,20 +10,22 @@ public class Queen extends Piece {
 
     @Override
     public boolean isValidMove(int newX, int newY, Board board) {
-        // Vérifie le type de déplacement (ligne, colonne, diagonale)
-        if ((newX == x || newY == y || Math.abs(newX - x) == Math.abs(newY - y)) &&
-                board.isPathClear(x, y, newX, newY)) {
+        System.out.println("Reine en (" + x + ", " + y + ") teste un déplacement vers (" + newX + ", " + newY + ")");
+        boolean isDiagonalOrStraight = (newX == x || newY == y || Math.abs(newX - x) == Math.abs(newY - y));
+        System.out.println("Déplacement diagonal ou droit : " + isDiagonalOrStraight);
 
-            // Vérifie la case cible
+        if (isDiagonalOrStraight && board.isPathClear(x, y, newX, newY)) {
+            System.out.println("Chemin dégagé entre (" + x + ", " + y + ") et (" + newX + ", " + newY + ")");
             Piece target = board.getPieceAt(newX, newY);
-            if (target == null) {
-                return true; // Case cible vide
-            } else if (!target.getColor().equals(this.color)) {
-                return true; // Capture d'une pièce adverse
-            }
+            boolean isCaptureOrEmpty = (target == null || !target.getColor().equals(this.color));
+            System.out.println("Case cible : " + (target != null ? target.toString() : "vide") + " - Déplacement valide : " + isCaptureOrEmpty);
+            return isCaptureOrEmpty;
         }
+
         return false; // Déplacement invalide
     }
+
+
 
 
     @Override
