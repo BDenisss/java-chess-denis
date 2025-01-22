@@ -1,9 +1,11 @@
 import com.chessgame.board.Board;
 import com.chessgame.pieces.*;
 
+import org.junit.Test;
+
 import static org.junit.Assert.*;
 
-public class Test {
+public class ChessTest {
 
     // Méthode pour imprimer l'état de l'échiquier
     private void printBoardState(Board board) {
@@ -18,7 +20,7 @@ public class Test {
         System.out.println();
     }
 
-    @org.junit.Test
+    @Test
     public void testKingInCheck() {
         Board board = new Board();
         board.initializePieces();
@@ -43,7 +45,7 @@ public class Test {
         assertTrue("Le roi noir doit être en échec.", board.isKingInCheck("black"));
     }
 
-    @org.junit.Test
+    @Test
     public void testKingNotInCheck() {
         Board board = new Board();
         board.initializePieces();
@@ -55,7 +57,7 @@ public class Test {
         assertFalse("Le roi noir ne doit pas être en échec.", board.isKingInCheck("black"));
     }
 
-    @org.junit.Test
+    @Test
     public void testInitialBoardSetup() {
         Board board = new Board();
         board.initializePieces();
@@ -71,7 +73,7 @@ public class Test {
         }
     }
 
-    @org.junit.Test
+    @Test
     public void testValidMove() {
         Board board = new Board();
         board.initializePieces();
@@ -88,7 +90,7 @@ public class Test {
         assertNull(board.getPieceAt(4, 1));
     }
 
-    @org.junit.Test
+    @Test
     public void testInvalidMove() {
         Board board = new Board();
         board.initializePieces();
@@ -104,41 +106,50 @@ public class Test {
         assertNull(board.getPieceAt(4, 4));
     }
 
-    @org.junit.Test
+    @Test
     public void testPathClear() {
         Board board = new Board();
-        board.initializePieces();
+
+        // Placer une tour blanche et un pion blanc pour bloquer le chemin
+        board.placePiece(0, 0, new Rook("white")); // Tour blanche en a1
+        board.placePiece(0, 1, new Pawn("white")); // Pion blanc en a2
 
         System.out.println("Avant modification du chemin :");
         printBoardState(board);
 
-        assertFalse(board.isPathClear(0, 1, 0, 3));
+        // Vérifie que le chemin est bloqué
+        assertFalse("Le chemin ne doit pas être dégagé.", board.isPathClear(0, 0, 0, 2)); // a1 vers a3
 
-        board.placePiece(0, 2, null);
+        // Supprimer le pion pour dégager le chemin
+        board.placePiece(0, 1, null);
 
         System.out.println("Après modification du chemin :");
         printBoardState(board);
 
-        assertTrue(board.isPathClear(0, 1, 0, 3));
+        // Vérifie que le chemin est dégagé
+        assertTrue("Le chemin doit être dégagé.", board.isPathClear(0, 0, 0, 2)); // a1 vers a3
     }
 
-    @org.junit.Test
+
+
+    @Test
     public void testCheckmate() {
         Board board = new Board();
 
         // Mat du berger
-        board.placePiece(3,7, new Queen("black"));
-        board.placePiece(4, 7, new King("black"));
-        board.placePiece(2, 3, new Bishop("white"));
-        board.placePiece(5, 6, new Queen("white"));
+        board.placePiece(3, 7, new Queen("black"));  // Dame noire en d8
+        board.placePiece(4, 7, new King("black"));  // Roi noir en e8
+        board.placePiece(2, 3, new Bishop("white")); // Fou blanc en c4
+        board.placePiece(5, 6, new Queen("white")); // Reine blanche en f7
 
         System.out.println("Échiquier avant vérification de l'échec et mat :");
         printBoardState(board);
 
-        assertTrue(board.isCheckmate("black"));
+        assertTrue("Le roi noir doit être en échec et mat.", board.isCheckmate("black"));
     }
 
-    @org.junit.Test
+
+    @Test
     public void testPawnPromotion() {
         Board board = new Board();
 
