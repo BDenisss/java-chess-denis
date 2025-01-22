@@ -4,33 +4,31 @@ import com.chessgame.board.Board;
 
 public class Queen extends Piece {
 
-     public Queen(String color) {
-         super(color);
-     }
+    public Queen(String color) {
+        super(color);
+    }
 
     @Override
     public boolean isValidMove(int newX, int newY, Board board) {
-        System.out.println("Reine en (" + x + ", " + y + ") teste un déplacement vers (" + newX + ", " + newY + ")");
-        boolean isDiagonalOrStraight = (newX == x || newY == y || Math.abs(newX - x) == Math.abs(newY - y));
-        System.out.println("Déplacement diagonal ou droit : " + isDiagonalOrStraight);
+        // Vérifie le type de déplacement (ligne, colonne, diagonale)
+        if ((newX == x || newY == y || Math.abs(newX - x) == Math.abs(newY - y)) &&
+                board.isPathClear(x, y, newX, newY)) {
 
-        if (isDiagonalOrStraight && board.isPathClear(x, y, newX, newY)) {
-            System.out.println("Chemin dégagé entre (" + x + ", " + y + ") et (" + newX + ", " + newY + ")");
+            // Vérifie la case cible
             Piece target = board.getPieceAt(newX, newY);
-            boolean isCaptureOrEmpty = (target == null || !target.getColor().equals(this.color));
-            System.out.println("Case cible : " + (target != null ? target.toString() : "vide") + " - Déplacement valide : " + isCaptureOrEmpty);
-            return isCaptureOrEmpty;
+            if (target == null) {
+                return true; // Case cible vide
+            } else if (!target.getColor().equals(this.color)) {
+                return true; // Capture d'une pièce adverse
+            }
         }
-
         return false; // Déplacement invalide
     }
 
 
-
-
     @Override
     public String toString() {
-         return color.equals("white") ? "D" : "d";
+        return color.equals("white") ? "D" : "d";
     }
 
 }

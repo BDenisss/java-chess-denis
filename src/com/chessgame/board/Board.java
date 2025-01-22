@@ -15,12 +15,13 @@ public class Board {
         if (isValidPosition(x, y)) {
             grid[x][y].setPiece(piece);
             if (piece != null) {
-                piece.setPosition(x, y); // Mise à jour des coordonnées internes
+                piece.setPosition(x, y);
             }
         } else {
             throw new IllegalArgumentException("Position invalide : (" + x + ", " + y + ")");
         }
     }
+
 
 
 
@@ -37,63 +38,49 @@ public class Board {
     public void initializePieces() {
         // Pions blancs
         for (int x = 0; x < 8; x++) {
-            placePiece(new Pawn("white"), x, 1); // Ligne 2 pour les pions blancs
+            placePiece(x, 1, new Pawn("white")); // Pions blancs sur la ligne 2
         }
+        System.out.println("Pions blancs placés sur la ligne 2.");
 
         // Pions noirs
         for (int x = 0; x < 8; x++) {
-            placePiece(new Pawn("black"), x, 6); // Ligne 7 pour les pions noirs
+            placePiece(x, 6, new Pawn("black")); // Pions noirs sur la ligne 7
         }
+        System.out.println("Pions noirs placés sur la ligne 7.");
 
-        // Tours blanches
-        placePiece(new Rook("white"), 0, 0); // Tour en a1
-        placePiece(new Rook("white"), 7, 0); // Tour en h1
+        // Pièces majeures
+        String[] majorPieces = {"Rook", "Knight", "Bishop"};
+        for (int i = 0; i < 3; i++) {
+            // Pièces blanches
+            placePiece(i, 0, createPiece(majorPieces[i], "white"));
+            placePiece(7 - i, 0, createPiece(majorPieces[i], "white"));
 
-        // Tours noires
-        placePiece(new Rook("black"), 0, 7); // Tour en a8
-        placePiece(new Rook("black"), 7, 7); // Tour en h8
+            // Pièces noires
+            placePiece(i, 7, createPiece(majorPieces[i], "black"));
+            placePiece(7 - i, 7, createPiece(majorPieces[i], "black"));
+        }
+        System.out.println("Pièces majeures placées.");
 
-        // Cavaliers blancs
-        placePiece(new Knight("white"), 1, 0);
-        placePiece(new Knight("white"), 6, 0);
+        // Reine et roi
+        placePiece(3, 0, new Queen("white"));
+        placePiece(4, 0, new King("white"));
+        placePiece(3, 7, new Queen("black"));
+        placePiece(4, 7, new King("black"));
 
-        // Cavaliers blancs
-        placePiece(new Knight("white"), 1, 0);
-        placePiece(new Knight("white"), 6, 0);
-
-        // Cavaliers noirs
-        placePiece(new Knight("black"), 1, 7);
-        placePiece(new Knight("black"), 6, 7);
-
-        // Fous blancs
-        placePiece(new Bishop("white"), 2, 0);
-        placePiece(new Bishop("white"), 5, 0);
-
-        // Fous noirs
-        placePiece(new Bishop("black"), 2, 7);
-        placePiece(new Bishop("black"), 5, 7);
-
-        // Dame blanche et noir
-        placePiece(new Queen("white"),3, 0);
-        placePiece(new Queen("black"),3, 7);
-
-        // Roi blanc et noir
-        placePiece(new King("white"),4,0);
-        placePiece(new King("black"),4,7);
-
-
-        // Autres pièces à ajouter plus tard : tours, cavaliers, fous, roi, reine...
+        System.out.println("Reines et rois placés.");
     }
 
-    // Place une pièce sur l'échiquier à une position donnée
-    public void placePiece(Piece piece, int x, int y) {
-        if (isValidPosition(x, y)) {
-            grid[x][y].setPiece(piece);
-            piece.setPosition(x, y); // Met à jour la position de la pièce
-        } else {
-            System.out.println("Position invalide : (" + x + ", " + y + ")");
-        }
+
+    // Méthode auxiliaire pour créer des pièces par type
+    private Piece createPiece(String type, String color) {
+        return switch (type) {
+            case "Rook" -> new Rook(color);
+            case "Knight" -> new Knight(color);
+            case "Bishop" -> new Bishop(color);
+            default -> throw new IllegalArgumentException("Type de pièce invalide : " + type);
+        };
     }
+
 
     // Vérifie si une position est valide sur l'échiquier
     public boolean isValidPosition(int x, int y) {
@@ -130,41 +117,32 @@ public class Board {
         }
     }
 
+    /**
+     * Vérifie si le chemin entre deux cases est libre.
+     * @param startX Coordonnée X de départ
+     * @param startY Coordonnée Y de départ
+     * @param endX Coordonnée X d'arrivée
+     * @param endY Coordonnée Y d'arrivée
+     * @return true si le chemin est libre, false sinon
+     */
     public boolean isPathClear(int startX, int startY, int endX, int endY) {
-        // Déplacement vertical
-        if (startX == endX) {
-            int step = (endY > startY) ? 1 : -1;
-            for (int y = startY + step; y != endY; y += step) {
-                if (getPieceAt(startX, y) != null) {
-                    return false; // Une pièce bloque le chemin
-                }
+        int deltaX = Integer.compare(endX, startX); // Direction horizontale (-1, 0, 1)
+        int deltaY = Integer.compare(endY, startY); // Direction verticale (-1, 0, 1)
+
+        int x = startX + deltaX;
+        int y = startY + deltaY;
+
+        while (x != endX || y != endY) {
+            if (getPieceAt(x, y) != null) {
+                return false; // Une pièce bloque le chemin
             }
+            x += deltaX;
+            y += deltaY;
         }
-        // Déplacement horizontal
-        else if (startY == endY) {
-            int step = (endX > startX) ? 1 : -1;
-            for (int x = startX + step; x != endX; x += step) {
-                if (getPieceAt(x, startY) != null) {
-                    return false; // Une pièce bloque le chemin
-                }
-            }
-        }
-        // Déplacement diagonal
-        else if (Math.abs(endX - startX) == Math.abs(endY - startY)) {
-            int stepX = (endX > startX) ? 1 : -1;
-            int stepY = (endY > startY) ? 1 : -1;
-            int x = startX + stepX;
-            int y = startY + stepY;
-            while (x != endX && y != endY) {
-                if (getPieceAt(x, y) != null) {
-                    return false; // Une pièce bloque le chemin
-                }
-                x += stepX;
-                y += stepY;
-            }
-        }
-        return true; // Le chemin est libre
+
+        return true; // Chemin libre
     }
+
 
 
 
@@ -194,50 +172,48 @@ public class Board {
         }
     }
 
-    public boolean isKingInCheck(String color) {
-        int kingX = -1, kingY = -1;
 
-        // Trouver la position du roi
+    public boolean isKingInCheck(String color) {
+        int[] kingPosition = findKing(color);
+        if (kingPosition == null) {
+            throw new IllegalStateException("Roi introuvable pour la couleur : " + color);
+        }
+
+        int kingX = kingPosition[0];
+        int kingY = kingPosition[1];
+
+        return isSquareUnderThreat(kingX, kingY, color);
+    }
+
+    private int[] findKing(String color) {
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 Piece piece = getPieceAt(x, y);
                 if (piece instanceof King && piece.getColor().equals(color)) {
-                    kingX = x;
-                    kingY = y;
-                    System.out.println("Roi trouvé : (" + kingX + ", " + kingY + ")");
-                    break;
+                    return new int[]{x, y};
                 }
             }
         }
+        return null; // Roi non trouvé
+    }
 
-        if (kingX == -1 || kingY == -1) {
-            throw new IllegalStateException("Roi introuvable pour la couleur : " + color);
-        }
-
-        // Vérifier si une pièce adverse peut atteindre le roi
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                Piece piece = getPieceAt(x, y);
+    private boolean isSquareUnderThreat(int x, int y, String color) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece piece = getPieceAt(i, j);
                 if (piece != null && !piece.getColor().equals(color)) {
-                    System.out.println("Test menace : " + piece + " en (" + x + ", " + y + ")");
-                    if (piece.isValidMove(kingX, kingY, this)) {
-                        System.out.println("Roi menacé par : " + piece + " en (" + x + ", " + y + ")");
-                        return true; // Le roi est en échec
+                    if (piece.isValidMove(x, y, this)) {
+                        return true; // La case est menacée
                     }
                 }
             }
         }
-
-        return false; // Le roi n'est pas en échec
+        return false; // Pas de menace
     }
-
-
-
-
 
     public boolean isCheckmate(String color) {
         if (!isKingInCheck(color)) {
-            return false; // Pas en échec, donc pas en échec et mat
+            return false; // Pas en échec
         }
 
         // Parcourir toutes les pièces du joueur
@@ -267,8 +243,11 @@ public class Board {
             }
         }
 
-        return true; // Aucun déplacement possible pour sortir de l'échec
+        return true; // Aucun déplacement ne peut éviter l'échec
     }
+
+
+
 
     public boolean canPlayerAvoidCheck(String color) {
         // Parcourir toutes les pièces du joueur

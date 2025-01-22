@@ -66,7 +66,6 @@ public class ChessGame {
                 if (board.isKingInCheck(isWhiteTurn ? "white" : "black")) {
                     // Annuler le déplacement
                     board.movePiece(destination[0], destination[1], source[0], source[1]);
-                    board.placePiece(destination[0], destination[1], originalPiece); // Restaurer la pièce
                     System.out.println("Déplacement invalide : le roi est toujours en échec !");
                     continue;
                 }
